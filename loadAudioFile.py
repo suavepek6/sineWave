@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
+from audioFunctions import *
 
 gfile = ''
 # create the root window
@@ -28,13 +29,17 @@ def select_file():
         filetypes=filetypes)
 
     gfile = filename
+    
+    if gfile.endswith('.mp3'):
+        convertToWav(gfile)
 
     # tkinter.messagebox — Tkinter message prompts
     showinfo(
         title='Selected File',
         message=filename
     )
-
+    
+    cleanData(gfile)
 
     gfile_label = ttk.Label(root, text=gfile)
     gfile_label.pack(side="bottom")
@@ -46,6 +51,7 @@ open_button = ttk.Button(
     text='Open a File',
     command=select_file
 )
+
 
 open_button.pack(expand=True)
 
