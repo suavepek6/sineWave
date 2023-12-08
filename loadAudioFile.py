@@ -8,7 +8,7 @@ gfile = ''
 # create the root window
 root = tk.Tk()
 root.title('Acoustics Sampling GUI (TESTING)')
-root.resizable(False, False)
+root.resizable(True, True)
 root.geometry('300x150')
 
 '''
@@ -30,8 +30,9 @@ def select_file():
 
     gfile = filename
     
+    ## CONVERTING FROM MP3 TO WAV
     if gfile.endswith('.mp3'):
-        convertToWav(gfile)
+        gfile = convertToWav(gfile)
 
     # tkinter.messagebox — Tkinter message prompts
     showinfo(
@@ -39,7 +40,9 @@ def select_file():
         message=filename
     )
     
-    cleanData(gfile)
+    ## CLEANING OF WAV FILE
+    channelInfo(gfile)
+    removeMeta(gfile)
 
     gfile_label = ttk.Label(root, text=gfile)
     gfile_label.pack(side="bottom")
