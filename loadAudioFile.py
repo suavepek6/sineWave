@@ -31,7 +31,7 @@ def select_file():
     gfile = filename
     
     if gfile.endswith('.mp3'):
-        convertToWav(gfile)
+        gfile = convertToWav(gfile)
 
     # tkinter.messagebox — Tkinter message prompts
     showinfo(
@@ -40,6 +40,8 @@ def select_file():
     )
     
     cleanData(gfile)
+    
+    audioPlot(gfile)
 
     gfile_label = ttk.Label(root, text=gfile)
     gfile_label.pack(side="bottom")
