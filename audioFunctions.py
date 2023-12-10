@@ -87,17 +87,25 @@ def audioPlot(soundFile):
     
     
     ##### REVERB (3rd plot) #####
-    reverbGraph = plt.figure(3)
-    def find_target_frequency(freqs):
+    '''
+    The three functions below are needed for reverb graphing.
+    '''
+    
+    global range
+    
+    def find_target_frequency(freqs,range):
         for x in freqs:
-            if x > 1000:
+            if x > range:
                 break
-        return x
+        return x    
+    
+    
     
     def frequency_check():
         
         global target_frequency
-        target_frequency = find_target_frequency(freqs)
+        
+        target_frequency = find_target_frequency(freqs,range)
         index_of_frequency = np.where(freqs == target_frequency)[0][0]
         
         # find sound data for a particular frequency
@@ -109,6 +117,99 @@ def audioPlot(soundFile):
         data_in_db_fun = 10 * np.log10(data_for_frequency)
         return data_in_db_fun
     
+    
+        # find a nearest value
+    def find_nearest_value(array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx]
+    
+    
+    ######################## MID RANGE ########################
+    reverbGraphMid = plt.figure(3)
+    range = 1000
+    
+    
+    
+    data_in_db = frequency_check()
+    #plt.figure() (ignore)
+    plt.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#00ab00')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Power (dB)')
+    
+    index_of_max = np.argmax(data_in_db)
+    value_of_max = data_in_db[index_of_max]
+    
+    plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
+    
+    # slice array from a max value
+    
+    sliced_array = data_in_db[index_of_max:]
+    
+    value_of_max_less_5 = value_of_max - 5
+    print("MID: VALUE_OF_MAX", value_of_max)
+    print("MID: VALUE_OF_MAX_LESS_5", value_of_max_less_5)
+    
+
+    
+    
+    value_of_max_less_5 = find_nearest_value(sliced_array, value_of_max_less_5)
+    index_of_max_less_5 = np.where(data_in_db == value_of_max_less_5)
+    plt.plot(t[index_of_max_less_5], data_in_db[index_of_max_less_5], 'yo')
+    
+    # slice array from a max-5db
+    value_of_max_less_25 = value_of_max - 25
+    value_of_max_less_25 = find_nearest_value(sliced_array, value_of_max_less_25)
+    index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
+    plt.plot(t[index_of_max_less_25], data_in_db[index_of_max_less_25], 'ro')
+    
+    rt20 = (t[index_of_max_less_25] - t[index_of_max_less_5])[0]
+    print("MID RT20 VALUE: ", rt20)
+    rt60Mid = 3 * rt20
+    
+    plt.grid()
+    
+    ######################## LOW RANGE ########################
+    reverbGraphLow = plt.figure(4)
+    range = 200
+    
+    data_in_db = frequency_check()
+    #plt.figure() (ignore)
+    plt.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#b21000')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Power (dB)')
+    
+    index_of_max = np.argmax(data_in_db)
+    value_of_max = data_in_db[index_of_max]
+    
+    plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
+    
+    # slice array from a max value
+    
+    sliced_array = data_in_db[index_of_max:]
+    
+    value_of_max_less_5 = value_of_max - 5
+    
+    value_of_max_less_5 = find_nearest_value(sliced_array, value_of_max_less_5)
+    index_of_max_less_5 = np.where(data_in_db == value_of_max_less_5)
+    plt.plot(t[index_of_max_less_5], data_in_db[index_of_max_less_5], 'yo')
+    
+    # slice array from a max-5db
+    value_of_max_less_25 = value_of_max - 25
+    value_of_max_less_25 = find_nearest_value(sliced_array, value_of_max_less_25)
+    index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
+    plt.plot(t[index_of_max_less_25], data_in_db[index_of_max_less_25], 'ro')
+    
+    rt20 = (t[index_of_max_less_25] - t[index_of_max_less_5])[0]
+    print("LOW RT20 VALUE: ", rt20)
+    rt60Low = 3 * rt20
+    
+    plt.grid()
+    
+    
+    ######################## HIGH RANGE ########################
+    reverbGraphHigh = plt.figure(5)
+    range = 5000
     
     data_in_db = frequency_check()
     #plt.figure() (ignore)
@@ -127,13 +228,6 @@ def audioPlot(soundFile):
     
     value_of_max_less_5 = value_of_max - 5
     
-    # find a nearest value
-    def find_nearest_value(array, value):
-        array = np.asarray(array)
-        idx = (np.abs(array - value)).argmin()
-        return array[idx]
-    
-    
     value_of_max_less_5 = find_nearest_value(sliced_array, value_of_max_less_5)
     index_of_max_less_5 = np.where(data_in_db == value_of_max_less_5)
     plt.plot(t[index_of_max_less_5], data_in_db[index_of_max_less_5], 'yo')
@@ -144,22 +238,22 @@ def audioPlot(soundFile):
     index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
     plt.plot(t[index_of_max_less_25], data_in_db[index_of_max_less_25], 'ro')
     
-    rt20 = (t[index_of_max_less_5] - t[index_of_max_less_25])[0]
-    
-    rt60 = 3 * rt20
+    rt20 = (t[index_of_max_less_25] - t[index_of_max_less_5])[0]
+    print("HIGH RT20 VALUE: ",rt20)
+    rt60High = 3 * rt20
     
     plt.grid()
     
     
+    ### AVERAGE RT60 VALUE ###
     
-    
-    
-    
-    
-    
+    rt60Avg = (rt60Mid + rt60Low + rt60High) / 3 
+    print("AVERAGE RT60 VALUE:", rt60Avg)
     
     #### SHOWTIME ####
     waveGraph.show()
     spectrumGraph.show()
-    reverbGraph.show()
+    reverbGraphMid.show()
+    reverbGraphLow.show()
+    reverbGraphHigh.show()
     
