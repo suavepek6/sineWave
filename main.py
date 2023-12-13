@@ -1,3 +1,13 @@
+
+from audioFunctions import convertToWav
+
+def main():
+ ## The main code execution happens here
+    fileSample = "clap_sample.mp3"
+    convertToWav(fileSample)
+
+main()
+
 """A programming language survey written in Python with Tkinter"""
 import tkinter as tk
 from tkinter.ttk import Label
